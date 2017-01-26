@@ -194,12 +194,12 @@ func (a *Agent) statusHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	id := r.URL.Path[idx+1:]
 	a.mu.Lock()
+	defer a.mu.Unlock()
 	exec, ok := a.executions[id]
 	if !ok {
 		http.Error(w, "Unknown command ID "+id, http.StatusBadRequest)
 		return
 	}
-	a.mu.Unlock()
 	if err := json.NewEncoder(w).Encode(&exec); err != nil {
 		http.Error(w, "Issue while retrieving command status for ID: "+id, http.StatusBadRequest)
 		return
